@@ -8,6 +8,7 @@ from app.models.Projects import Project
 from app.models.user import User
 from app.schemas.taskSchema import TaskCreate, TaskUpdate, TaskOut
 from app.routes.authenticate import get_current_user
+from app.core.celery_app import send_email
 
 router = APIRouter(
     tags=["Tasks"]
@@ -101,8 +102,29 @@ def update_task(
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
 
+    
+    old_status = task.status
+    old_assigned_user_id = task.assigned_user_id
+
     for field, value in task_data.dict(exclude_unset=True).items():
         setattr(task, field, value)
+
+
+    if "status" in task_data.dict(exclude_unset=True) and task.status != old_status:
+        if task.assigned_user_id:
+            assigned_user = db.query(User).filter(User.id == task.assigned_user_id).first()
+            if assigned_user:
+                subject = f"Task Status Updated: {task.title}"
+                content = f"The status of your task '{task.title}' (ID: {task.id}) has been updated to: {task.status}."
+                send_email.delay(assigned_user.email, subject, content)
+
+    
+    if "assigned_user_id" in task_data.dict(exclude_unset=True) and task.assigned_user_id != old_assigned_user_id:
+        assigned_user = db.query(User).filter(User.id == task.assigned_user_id).first()
+        if assigned_user:
+            subject = f"New Task Assigned: {task.title}"
+            content = f"You have been assigned a new task '{task.title}' (ID: {task.id})."
+            send_email.delay(assigned_user.email, subject, content)
 
     db.commit()
     db.refresh(task)

@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: fastapi_app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  worker:
+    build: .
+    container_name: celery_worker
+    env_file:
+      - .env
+    command: celery -A app.core.celery_app worker --loglevel=info
+    depends_on:
+      - db
+
+  beat:
+    build: .
+    container_name: celery_beat
+    env_file:
+      - .env
+    command: celery -A app.core.celery_app beat --loglevel=info
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskmanager
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
