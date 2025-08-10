@@ -1,15 +1,11 @@
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 
 DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+psycopg2://postgres:password@localhost:5432/taskmanager"
-)
-
+    "DATABASE_URL")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key_here")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")

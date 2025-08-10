@@ -7,12 +7,11 @@ from app.models.task import Task, TaskStatus, TaskPriority
 from app.models.Projects import Project
 from app.models.user import User
 from app.schemas.taskSchema import TaskCreate, TaskUpdate, TaskOut
-from app.api.authenticate import get_current_user
+from app.routes.authenticate import get_current_user
 
 router = APIRouter(
     tags=["Tasks"]
 )
-
 
 @router.post("/", response_model=TaskOut)
 def create_task(
@@ -20,7 +19,6 @@ def create_task(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    
     project = db.query(Project).filter(
         Project.id == task.project_id,
         Project.owner_id == current_user.id
@@ -36,14 +34,13 @@ def create_task(
         status=task.status,
         priority=task.priority,
         project_id=task.project_id,
-        assigned_user_id=task.assigned_user_id
+        assigned_user_id=task.assigned_user_id  # ✅ updated
     )
 
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
     return new_task
-
 
 @router.get("/", response_model=List[TaskOut])
 def list_tasks(
@@ -74,8 +71,6 @@ def list_tasks(
     tasks = query.offset(skip).limit(limit).all()
     return tasks
 
-
-
 @router.get("/{task_id}", response_model=TaskOut)
 def get_task(
     task_id: int,
@@ -90,8 +85,6 @@ def get_task(
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
-
-
 
 @router.patch("/{task_id}", response_model=TaskOut)
 def update_task(
@@ -114,8 +107,6 @@ def update_task(
     db.commit()
     db.refresh(task)
     return task
-
-
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(

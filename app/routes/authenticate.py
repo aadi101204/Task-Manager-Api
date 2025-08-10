@@ -1,25 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
-from passlib.context import CryptContext
 
 from app.db import get_db
 from app.models.user import User
 from app.schemas.userSchema import UserCreate, UserOut, Tokens
-from app.core.security import create_access_token, decode_access_token
-from fastapi.security import OAuth2PasswordBearer
+from app.core.security import create_access_token, get_password_hash, verify_password, get_current_user
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
-
-
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
 
 
 
@@ -46,30 +34,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     access_token = create_access_token({"sub": str(user.id)})
     return {"access_token": access_token, "token_type": "bearer"}
 
-
-
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    print(token)
-    payload = decode_access_token(token)
-
-    if payload is None:
-        raise credentials_exception
-    
-    print(payload)
-    user_id = payload.get("sub")
-    if user_id is None:
-        raise credentials_exception
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise credentials_exception
-
-    return user
 
 @router.get("/users")
 def list_users(db: Session = Depends(get_db)):

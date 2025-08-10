@@ -6,7 +6,7 @@ from app.db import get_db
 from app.models.Projects import Project
 from app.schemas.projectSchema import ProjectOut
 from app.schemas.projectSchema import ProjectCreate, ProjectUpdate, ProjectOut
-from app.api.authenticate import get_current_user
+from app.routes.authenticate import get_current_user
 from app.models.user import User
 
 router = APIRouter(
