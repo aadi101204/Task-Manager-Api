@@ -48,13 +48,11 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    print(token)
     payload = decode_access_token(token)
 
     if payload is None:
         raise credentials_exception
     
-    print(payload)
     user_id = payload.get("sub")
     if user_id is None:
         raise credentials_exception

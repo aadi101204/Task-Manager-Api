@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import os
 
-from app.db import localSession
+from app.db import SessionLocal
 from app.models.user import User
 from app.models.task import Task, TaskStatus
 
@@ -47,14 +47,14 @@ def send_email(to_email, subject, content):
         print(f"[EMAIL ERROR] Could not send to {to_email}: {e}")
 
 def get_all_users():
-    db: Session = localSession()
+    db: Session = SessionLocal()
     try:
         return db.query(User).all()
     finally:
         db.close()
 
 def get_overdue_tasks_for_user(user_id: int):
-    db: Session = localSession()
+    db: Session = SessionLocal()
     try:
         return db.query(Task).filter(
             Task.assigned_user_id == user_id,
