@@ -1,12 +1,14 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 alembic
 python-jose[cryptography]
+authlib
 passlib[bcrypt]
-pydantic
+pydantic[email]
 python-dotenv
 celery
 redis
 sendgrid
+email-validator
