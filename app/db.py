@@ -6,12 +6,15 @@ DATABASE_URL = settings.DATABASE_URL
 
 
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    pool_recycle=300,
-    echo=False  
-)
+if DATABASE_URL:
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        echo=False  
+    )
+else:
+    engine = None
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

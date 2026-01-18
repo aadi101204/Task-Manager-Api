@@ -3,8 +3,8 @@ from pydantic import AnyHttpUrl, field_validator
 from typing import List, Union, Optional
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
-    SECRET_KEY: str
+    DATABASE_URL: Optional[str] = None
+    SECRET_KEY: Optional[str] = None
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
