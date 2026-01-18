@@ -13,6 +13,7 @@ A RESTful API for managing tasks and projects built with FastAPI, SQLAlchemy, an
 
 ## Tech Stack
 
+- **Frontend**: React, TypeScript, Vite
 - **Backend**: FastAPI
 - **Database**: PostgreSQL
 - **ORM**: SQLAlchemy
