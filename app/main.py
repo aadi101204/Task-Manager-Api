@@ -10,13 +10,10 @@ from app.routes import authenticate, projects, task as task_routes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from app.db import init_db
-    init_db()
-
+    # Only create tables in development mode
     if settings.ENVIRONMENT == "development":
         from app.database_init import create_tables
         create_tables()
-
     yield
 
 app = FastAPI(

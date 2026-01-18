@@ -1,7 +1,7 @@
-from app.db import engine, Base
+from app.db import get_engine, Base
 
 def create_tables():
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=get_engine())
 
 def init_db():
     create_tables()
