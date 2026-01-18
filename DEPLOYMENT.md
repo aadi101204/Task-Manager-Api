@@ -61,17 +61,40 @@ For permanent access, deploy to a cloud provider.
 
 ### Vercel (Recommended for Full Stack)
 
-This repository is configured for easy deployment on Vercel.
+This repository is configured for Vercel deployment with the backend as serverless functions and frontend as static assets.
+
+**Project Structure:**
+- `api/main.py` - Serverless function entry point for the FastAPI backend
+- `frontend/` - React frontend application
+- `vercel.json` - Deployment configuration
+
+**Deployment Steps:**
 
 1. **Push your code to GitHub**.
-2. **Import project into Vercel**.
-3. **Environment Variables**:
-   Add the following variables in Vercel project settings:
-   - `DATABASE_URL`: Your production PostgreSQL database URL (e.g., from Neon or Supabase).
-   - `SECRET_KEY`: A strong secret key.
-   - `ALGORITHM`: `HS256`.
-   - `ACCESS_TOKEN_EXPIRE_MINUTES`: `30`.
-   - `BACKEND_CORS_ORIGINS`: `["https://your-vercel-app-url.vercel.app"]`.
+
+2. **Import project into Vercel**:
+   - Go to [vercel.com](https://vercel.com) and sign in
+   - Click "Add New Project"
+   - Import your GitHub repository
+
+3. **Configure Environment Variables** in Vercel project settings:
+   - `DATABASE_URL`: Your production PostgreSQL database URL (e.g., from [Neon](https://neon.tech) or [Supabase](https://supabase.com))
+   - `SECRET_KEY`: A strong secret key (generate with `openssl rand -hex 32`)
+   - `ALGORITHM`: `HS256`
+   - `ACCESS_TOKEN_EXPIRE_MINUTES`: `30`
+   - `BACKEND_CORS_ORIGINS`: `["https://your-vercel-app.vercel.app"]` (replace with your actual Vercel URL)
+   - `ENVIRONMENT`: `production`
+
+4. **Deploy**: Vercel will automatically build and deploy both frontend and backend.
+
+**API Endpoints:**
+- Your API will be available at: `https://your-app.vercel.app/api/...`
+- Frontend will be at: `https://your-app.vercel.app/`
+
+**Important Notes:**
+- The backend runs as serverless functions, so database connections are initialized on each request
+- Make sure your database allows connections from Vercel's IP addresses
+- Update frontend API URLs to use `/api` prefix (relative URLs work automatically)
 
 ### Alternative: Render / Railway
 

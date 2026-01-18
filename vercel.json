@@ -1,13 +1,19 @@
 {
+    "buildCommand": "cd frontend && npm install && npm run build",
+    "outputDirectory": "frontend/dist",
     "functions": {
         "api/main.py": {
-            "runtime": "python3.10"
+            "runtime": "python3.9"
         }
     },
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/(.*)",
-            "dest": "api/main.py"
+            "source": "/api/:path*",
+            "destination": "/api/main.py"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
