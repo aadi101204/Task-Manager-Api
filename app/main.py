@@ -10,9 +10,13 @@ from app.routes import authenticate, projects, task as task_routes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from app.db import init_db
+    init_db()
+
     if settings.ENVIRONMENT == "development":
         from app.database_init import create_tables
         create_tables()
+
     yield
 
 app = FastAPI(
@@ -23,14 +27,15 @@ app = FastAPI(
 )
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[str(origin).rstrip("/") for origin in settings.BACKEND_CORS_ORIGINS],
-    allow_credentials=True,
+if settings.ENVIRONMENT == "development":
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(o).rstrip("/") for o in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 app.include_router(authenticate.router, prefix="/auth", tags=["Authentication"])
