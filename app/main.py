@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
+from app.core.config import settings
 
 
 from app.routes import authenticate, projects, task as task_routes
 
 
-if os.getenv("ENVIRONMENT") == "development":
+if settings.ENVIRONMENT == "development":
     from app.database_init import create_tables
     create_tables()
 
@@ -19,8 +19,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=[str(origin).rstrip("/") for origin in settings.BACKEND_CORS_ORIGINS],
     allow_credentials=True,
+
     allow_methods=["*"],
     allow_headers=["*"],
 )

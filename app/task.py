@@ -3,30 +3,29 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from sqlalchemy.orm import Session
 from datetime import datetime
-import os
+from app.core.config import settings
 
-from app.db import SessionLocal
-from app.models.user import User
-from app.models.task import Task, TaskStatus
+# SENDGRID_API_KEY and FROM_EMAIL are accessed from settings inside the function or globally
+# But if they are global variables here, we should initialize them from settings
+# However, tasks might run in a separate worker process where settings need to be loaded
+# Since settings is instantiated in app/core/config.py, it should be fine.
 
 
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-FROM_EMAIL = os.getenv('FROM_EMAIL', 'no-reply@yourdomain.com')
 
 @celery.task(bind=True, retry_kwargs={'max_retries': 3, 'countdown': 60})
 def send_email(self, to_email, subject, content):
-    if not SENDGRID_API_KEY:
+    if not settings.SENDGRID_API_KEY:
         print("[EMAIL] Warning: SENDGRID_API_KEY not configured")
         return False
         
     try:
         message = Mail(
-            from_email=FROM_EMAIL,
+            from_email=settings.FROM_EMAIL,
             to_emails=to_email,
             subject=subject,
             plain_text_content=content,
         )
-        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
         response = sg.send(message)
         print(f"[EMAIL] Sent to {to_email}, status: {response.status_code}")
         return True

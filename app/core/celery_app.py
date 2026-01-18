@@ -1,15 +1,12 @@
 from celery import Celery
 from celery.schedules import crontab
-import os
-
-
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+from app.core.config import settings
 
 
 celery = Celery(
     'task_manager',
-    broker=REDIS_URL,
-    backend=REDIS_URL
+    broker=settings.REDIS_URL,
+    backend=settings.REDIS_URL
 )
 
 
@@ -27,7 +24,7 @@ from app.task import send_email, send_overdue_summary
 
 celery.conf.beat_schedule = {
     'send-daily-overdue-summary': {
-        'task': 'app.tasks.send_overdue_summary',
+        'task': 'app.task.send_overdue_summary',
         'schedule': crontab(hour=6, minute=0),  
     },
 }

@@ -52,13 +52,13 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: taskmanager_db
+    container_name: taskmanagerapi_db
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-taskmanager}
+      POSTGRES_DB: ${POSTGRES_DB:-taskmanagerapi}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped

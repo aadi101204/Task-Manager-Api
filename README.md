@@ -69,8 +69,28 @@ Relationships:
 - Python 3.8+
 - PostgreSQL
 - Redis (for Celery background tasks)
+- Node.js & npm (for Frontend)
 
-### Local Development Setup
+### Frontend Setup
+
+The frontend is located in the `frontend/` directory.
+
+1. **Install dependencies**
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+   Access at `http://localhost:5173`
+
+### Deployment & Remote Access
+For instructions on how to access the app from other devices or deploy to the cloud, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### Local Backend Setup
 
 1. **Clone the repository**
 
