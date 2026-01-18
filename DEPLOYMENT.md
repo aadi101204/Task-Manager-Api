@@ -59,7 +59,21 @@ If you want to show your app to someone outside your network without deploying:
 
 For permanent access, deploy to a cloud provider.
 
-### Recommend: Render / Railway
+### Vercel (Recommended for Full Stack)
+
+This repository is configured for easy deployment on Vercel.
+
+1. **Push your code to GitHub**.
+2. **Import project into Vercel**.
+3. **Environment Variables**:
+   Add the following variables in Vercel project settings:
+   - `DATABASE_URL`: Your production PostgreSQL database URL (e.g., from Neon or Supabase).
+   - `SECRET_KEY`: A strong secret key.
+   - `ALGORITHM`: `HS256`.
+   - `ACCESS_TOKEN_EXPIRE_MINUTES`: `30`.
+   - `BACKEND_CORS_ORIGINS`: `["https://your-vercel-app-url.vercel.app"]`.
+
+### Alternative: Render / Railway
 
 These platforms support Docker directly.
 
