@@ -3,17 +3,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 
 
+from contextlib import asynccontextmanager
+
 from app.routes import authenticate, projects, task as task_routes
 
 
-if settings.ENVIRONMENT == "development":
-    from app.database_init import create_tables
-    create_tables()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if settings.ENVIRONMENT == "development":
+        from app.database_init import create_tables
+        create_tables()
+    yield
 
 app = FastAPI(
     title="Task Manager API",
     description="A RESTful API for managing tasks and projects",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 
